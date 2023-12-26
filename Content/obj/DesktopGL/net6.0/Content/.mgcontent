@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="utf-8"?>
+<SourceFileCollection xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+  <Profile>Reach</Profile>
+  <Platform>DesktopGL</Platform>
+  <Config />
+  <SourceFiles>
+    <File>C:/Work/thegame/TheGame/Content/Maps/Map01.tide</File>
+    <File>C:/Work/thegame/TheGame/Content/Fonts/Font.spritefont</File>
+    <File>C:/Work/thegame/TheGame/Content/Graphics/Leaf.png</File>
+    <File>C:/Work/thegame/TheGame/Content/Sound/jump.wav</File>
+    <File>C:/Work/thegame/TheGame/Content/Graphics/flower_green.png</File>
+    <File>C:/Work/thegame/TheGame/Content/Graphics/flower_orange.png</File>
+    <File>C:/Work/thegame/TheGame/Content/Graphics/flower_purple.png</File>
+    <File>C:/Work/thegame/TheGame/Content/Graphics/flower_yellow.png</File>
+    <File>C:/Work/thegame/TheGame/Content/Graphics/particle.png</File>
+    <File>C:/Work/thegame/TheGame/Content/TileSheets/player.png</File>
+    <File>C:/Work/thegame/TheGame/Content/Sound/pick.wav</File>
+    <File>C:/Work/thegame/TheGame/Content/Graphics/heart1.png</File>
+    <File>C:/Work/thegame/TheGame/Content/Graphics/heart2.png</File>
+    <File>C:/Work/thegame/TheGame/Content/Graphics/heart3.png</File>
+    <File>C:/Work/thegame/TheGame/Content/Graphics/heart4.png</File>
+    <File>C:/Work/thegame/TheGame/Content/TileSheets/map1/sun.png</File>
+    <File>C:/Work/thegame/TheGame/Content/Sound/jumpland.wav</File>
+    <File>C:/Work/thegame/TheGame/Content/TileSheets/ball.png</File>
+    <File>C:/Work/thegame/TheGame/Content/Sound/throw.wav</File>
+    <File>C:/Work/thegame/TheGame/Content/TileSheets/dog.png</File>
+    <File>C:/Work/thegame/TheGame/Content/Sound/dog_bark.wav</File>
+    <File>C:/Work/thegame/TheGame/Content/Sound/water.wav</File>
+    <File>C:/Work/thegame/TheGame/Content/Graphics/frame.png</File>
+    <File>C:/Work/thegame/TheGame/Content/Shaders/BloomCombine.fx</File>
+    <File>C:/Work/thegame/TheGame/Content/Shaders/BloomExtract.fx</File>
+    <File>C:/Work/thegame/TheGame/Content/Shaders/GaussianBlur.fx</File>
+    <File>C:/Work/thegame/TheGame/Content/Graphics/background.jpg</File>
+    <File>C:/Work/thegame/TheGame/Content/Sound/drop_gem.wav</File>
+    <File>C:/Work/thegame/TheGame/Content/Sound/exit.wav</File>
+    <File>C:/Work/thegame/TheGame/Content/Music/map01.mp3</File>
+    <File>C:/Work/thegame/TheGame/Content/Sound/blow.wav</File>
+    <File>C:/Work/thegame/TheGame/Content/Music/map02.mp3</File>
+    <File>C:/Work/thegame/TheGame/Content/Music/map03.mp3</File>
+    <File>C:/Work/thegame/TheGame/Content/Music/map04.mp3</File>
+    <File>C:/Work/thegame/TheGame/Content/Music/final01.mp3</File>
+    <File>C:/Work/thegame/TheGame/Content/Music/final02.mp3</File>
+    <File>C:/Work/thegame/TheGame/Content/Music/final03.mp3</File>
+  </SourceFiles>
+  <DestFiles>
+    <File xsi:nil="true" />
+    <File xsi:nil="true" />
+    <File xsi:nil="true" />
+    <File xsi:nil="true" />
+    <File xsi:nil="true" />
+    <File xsi:nil="true" />
+    <File xsi:nil="true" />
+    <File xsi:nil="true" />
+    <File xsi:nil="true" />
+    <File xsi:nil="true" />
+    <File xsi:nil="true" />
+    <File xsi:nil="true" />
+    <File xsi:nil="true" />
+    <File xsi:nil="true" />
+    <File xsi:nil="true" />
+    <File xsi:nil="true" />
+    <File xsi:nil="true" />
+    <File xsi:nil="true" />
+    <File xsi:nil="true" />
+    <File xsi:nil="true" />
+    <File xsi:nil="true" />
+    <File xsi:nil="true" />
+    <File xsi:nil="true" />
+    <File xsi:nil="true" />
+    <File xsi:nil="true" />
+    <File xsi:nil="true" />
+    <File xsi:nil="true" />
+    <File xsi:nil="true" />
+    <File xsi:nil="true" />
+    <File xsi:nil="true" />
+    <File xsi:nil="true" />
+    <File xsi:nil="true" />
+    <File xsi:nil="true" />
+    <File xsi:nil="true" />
+    <File xsi:nil="true" />
+    <File xsi:nil="true" />
+    <File xsi:nil="true" />
+  </DestFiles>
+</SourceFileCollection>

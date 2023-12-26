@@ -1,0 +1,12 @@
+C:\Work\thegame\TheGame\xTile\bin\Debug\net6.0\xTile.deps.json
+C:\Work\thegame\TheGame\xTile\bin\Debug\net6.0\xTile.dll
+C:\Work\thegame\TheGame\xTile\bin\Debug\net6.0\xTile.pdb
+C:\Work\thegame\TheGame\xTile\obj\Debug\net6.0\xTile.csproj.AssemblyReference.cache
+C:\Work\thegame\TheGame\xTile\obj\Debug\net6.0\xTile.GeneratedMSBuildEditorConfig.editorconfig
+C:\Work\thegame\TheGame\xTile\obj\Debug\net6.0\xTile.AssemblyInfoInputs.cache
+C:\Work\thegame\TheGame\xTile\obj\Debug\net6.0\xTile.AssemblyInfo.cs
+C:\Work\thegame\TheGame\xTile\obj\Debug\net6.0\xTile.csproj.CoreCompileInputs.cache
+C:\Work\thegame\TheGame\xTile\obj\Debug\net6.0\xTile.dll
+C:\Work\thegame\TheGame\xTile\obj\Debug\net6.0\refint\xTile.dll
+C:\Work\thegame\TheGame\xTile\obj\Debug\net6.0\xTile.pdb
+C:\Work\thegame\TheGame\xTile\obj\Debug\net6.0\ref\xTile.dll
