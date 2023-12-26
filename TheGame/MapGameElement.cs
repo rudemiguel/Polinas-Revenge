@@ -1,9 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
+using Microsoft.Xna.Framework.Input.Touch;
 using xTile;
 using xTile.Dimensions;
 using xTile.Display;
@@ -14,7 +14,6 @@ using nkast.Aether.Physics2D.Common;
 using nkast.Aether.Physics2D.Common.Decomposition;
 using FarseerPhysics;
 using Studies.Joystick.Input;
-using Microsoft.Xna.Framework.Input.Touch;
 
 namespace TheGame;
 
@@ -104,18 +103,24 @@ class MapGameElement : DrawableGameComponent
         content.RootDirectory = ".";
         var graphicsDevice = Game.GraphicsDevice;
         m_viewPort = new xTile.Dimensions.Rectangle(0, 0, graphicsDevice.Viewport.Width, graphicsDevice.Viewport.Height);
+        
         // Create a new SpriteBatch, which can be used to draw textures.
         m_xnaDisplayDevice = new XnaDisplayDevice(content, graphicsDevice);
+        
         // панель
         m_panelManager.LoadContent(graphicsDevice, content);
+        
         // Частици
         m_particleEmitterManager.LoadContent(content);
+        
         // load map from content pipeline and initialise it
         m_map = Game.Content.Load<Map>("Maps\\Map01");
         m_map.LoadTileSheets(m_xnaDisplayDevice);
+        
         // Вода
         var waterLayer = m_map.GetLayer("water");
         m_waterManager = new WaterManager(waterLayer);
+        
         // Пол
         var foregroundLayer = m_map.GetLayer("foreground");
         var groundLayer = m_map.GetLayer("ground");
@@ -133,9 +138,9 @@ class MapGameElement : DrawableGameComponent
                     tileVertices.TryGetValue(foregroundTile.TileIndex, out vertices);
                     if (vertices == null)
                     {
-                        xTile.Dimensions.Rectangle r = foregroundTile.TileSheet.GetTileImageBounds(foregroundTile.TileIndex);
+                        var r = foregroundTile.TileSheet.GetTileImageBounds(foregroundTile.TileIndex);
                         var tileSheetTexture = m_xnaDisplayDevice.GetTileSheetTexture(tile.TileSheet);
-                        Microsoft.Xna.Framework.Rectangle rect = new Microsoft.Xna.Framework.Rectangle(r.X, r.Y, r.Width, r.Height);
+                        var rect = new Microsoft.Xna.Framework.Rectangle(r.X, r.Y, r.Width, r.Height);
                         tileSheetTexture.GetData<uint>(0, rect, data, 0, rect.Width * rect.Height);
                         vertices = PolygonTools.CreatePolygon(data, foregroundLayer.TileWidth, true);
                         var scaleVector = ConvertUnits.ToSimUnits(1f, 1f);
@@ -191,6 +196,7 @@ class MapGameElement : DrawableGameComponent
                     else
                     {
                         actorGameObject = new EnemyGameObject(m_world, tileSheet, texture);
+
                         // Добавляем в панель место для кристала если враг бросает
                         if ((actorGameObject as EnemyGameObject).IsAllowDropGem)
                             m_panelManager.GemCount++;
@@ -360,8 +366,8 @@ class MapGameElement : DrawableGameComponent
         {
             if (playerObject.Fire())
             {
-                TileSheet ballTileSheet = m_map.GetTileSheet("ball");
-                Texture2D ballTexture = m_xnaDisplayDevice.GetTileSheetTexture(ballTileSheet);
+                var ballTileSheet = m_map.GetTileSheet("ball");
+                var ballTexture = m_xnaDisplayDevice.GetTileSheetTexture(ballTileSheet);
                 m_gameObjectList.Add(new BulletGameObject(m_world, playerObject, ballTileSheet, ballTexture));
                 m_soundManager.Play("throw");
             }
@@ -499,6 +505,7 @@ class MapGameElement : DrawableGameComponent
             foreach (var gameObject in removeGameObjectList)
             {
                 m_gameObjectList.Remove(gameObject);
+                gameObject.Dispose();
             }
         }
 

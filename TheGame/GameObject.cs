@@ -13,88 +13,53 @@ namespace TheGame;
 /// </summary>
 class AnimationStage
 {
-    private int m_nCurFrame;
     private int m_nBeginFrame;
     private int m_nEndFrame;
     private string m_strName;
-    private bool m_bLooped;
-    private long m_nFrameIntervalMillisec;
     private long m_nFrameTimeMillisec;
 
-    public AnimationStage(int nBeginFrame, int nEndFrame, String strName)
+    public AnimationStage(int nBeginFrame, int nEndFrame, string strName)
     {
         m_nBeginFrame = nBeginFrame;
         m_nEndFrame = nEndFrame;
-        m_nCurFrame = m_nBeginFrame;
+        CurFrame = m_nBeginFrame;
         m_strName = strName;
-        m_nFrameIntervalMillisec = 800;
+        FrameInterval = 800;
     }
 
     public string Name => m_strName;
 
-    public bool IsLooped
-    {
-        get
-        {
-            return m_bLooped;
-        }
-        set
-        {
-            m_bLooped = value;
-        }
-    }
+    public bool IsLooped { get; set; }
 
-    public int CurFrame
-    {
-        get
-        {
-            return m_nCurFrame;
-        }
-    }
+    public int CurFrame { get; set; }
 
-    public bool IsEnd
-    {
-        get
-        {
-            return (!m_bLooped) ? m_nCurFrame == m_nEndFrame : false;
-        }
-    }
+    public bool IsEnd => !IsLooped ? CurFrame == m_nEndFrame : false;
 
-    public long FrameInterval
-    {
-        get
-        {
-            return m_nFrameIntervalMillisec;
-        }
-        set
-        {
-            m_nFrameIntervalMillisec = value;
-        }
-    }
+    public long FrameInterval { get; set; }
 
     public void Begin()
     {
         m_nFrameTimeMillisec = 0;
-        m_nCurFrame = m_nBeginFrame;
+        CurFrame = m_nBeginFrame;
     }
 
     public void Next()
     {
         m_nFrameTimeMillisec = 0;
-        m_nCurFrame++;
-        if (m_nCurFrame > m_nEndFrame)
+        CurFrame++;
+        if (CurFrame > m_nEndFrame)
         {
-            if (m_bLooped)
-                m_nCurFrame = m_nBeginFrame;
+            if (IsLooped)
+                CurFrame = m_nBeginFrame;
             else
-                m_nCurFrame = m_nEndFrame;
+                CurFrame = m_nEndFrame;
         }
     }
 
     public void Update(long nMillisec)
     {
         m_nFrameTimeMillisec += nMillisec;
-        if (m_nFrameTimeMillisec >= m_nFrameIntervalMillisec)
+        if (m_nFrameTimeMillisec >= FrameInterval)
             Next();
     }
 }
@@ -177,7 +142,7 @@ class AnimationStageList
 /// <summary>
 /// Игровой объект
 /// </summary>
-abstract class GameObject
+abstract class GameObject : IDisposable
 {
     protected World m_world;
     protected xTile.Tiles.TileSheet m_tileSheet;
@@ -256,6 +221,13 @@ abstract class GameObject
                 }
             }
         }
+    }
+
+    /// <ingeritdoc/>
+    public virtual void Dispose()
+    {
+        foreach (var body in m_bodyList)
+            m_world.Remove(body);
     }
 }
 
