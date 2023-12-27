@@ -84,13 +84,7 @@ class MapGameElement : DrawableGameComponent
     /// <summary>
     /// Менеджер панели
     /// </summary>
-    public PanelManager PanelManager
-    {
-        get
-        {
-            return m_panelManager;
-        }
-    }
+    public PanelManager PanelManager => m_panelManager;
 
     #region DrawableGameComponent Members
 
@@ -199,7 +193,7 @@ class MapGameElement : DrawableGameComponent
 
                         // Добавляем в панель место для кристала если враг бросает
                         if ((actorGameObject as EnemyGameObject).IsAllowDropGem)
-                            m_panelManager.GemCount++;
+                            m_panelManager.ReserveGem();
                         enemiesGameObjectList.Add(actorGameObject);
                     }
                     actorGameObject.Position = pos - new Vector2(tileSheet.TileWidth / 2, tileSheet.TileHeight / 2);
@@ -235,7 +229,7 @@ class MapGameElement : DrawableGameComponent
                     gem.Position = pos;
                     m_gameObjectList.Add(gem);
                     gemsLayer.Tiles[x, y] = null;
-                    m_panelManager.GemCount++;
+                    m_panelManager.ReserveGem();
                 }
             }
         }
@@ -292,7 +286,7 @@ class MapGameElement : DrawableGameComponent
     public override void Draw(GameTime gameTime)
     {
         // карта
-        m_map.Draw(m_xnaDisplayDevice, m_viewPort, Location.Origin, true);
+        m_map.Draw(m_xnaDisplayDevice, m_viewPort, Location.Origin, false);
 
         // стики
         _stickSpriteBatch.Begin();

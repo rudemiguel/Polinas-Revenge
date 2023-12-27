@@ -16,32 +16,18 @@ class PanelManager
     private SpriteFont m_spriteFont;
     private List<GemGameObject> m_gemsList;
     private List<Rectangle> m_gemPlaceholderList;
-    private int m_nGemCount;
 
     public PanelManager()
     {
         m_gemsList = new List<GemGameObject>();
         m_gemPlaceholderList = null;
-        m_nGemCount = 0;
     }
 
-    public int GemCount { get; set; }
+    public int GemCount { get; private set; }
 
-    public List<Rectangle> PlaceholderBoundsList
-    {
-        get
-        {
-            return m_gemPlaceholderList;
-        }
-    }
+    public List<Rectangle> PlaceholderBoundsList => m_gemPlaceholderList;
 
-    public List<GemGameObject> GemList
-    {
-        get
-        {
-            return m_gemsList;
-        }
-    }
+    public List<GemGameObject> GemList => m_gemsList;
 
     public void LoadContent(GraphicsDevice graphicsDevice, ContentManager content)
     {
@@ -51,10 +37,15 @@ class PanelManager
         m_texturePlaceholder = content.Load<Texture2D>("Graphics\\frame");
     }
 
+    public void ReserveGem()
+    {
+        GemCount++;
+    }
+
     public int AddGem(GemGameObject gemGameObject)
     {
         m_gemsList.Add(gemGameObject);
-        if (m_gemsList.Count > m_nGemCount)
+        if (m_gemsList.Count > GemCount)
             throw new SystemException("Gem count error");
 
         return m_gemsList.Count - 1;
@@ -77,13 +68,13 @@ class PanelManager
         int h = viewPort.Height / 10;
         var panelRectangle = new Rectangle(0, viewPort.Height - h, viewPort.Width, h);
         int nPaddingVectical = 5;
-        int nPlaceHolderWidth = panelRectangle.Width / (m_nGemCount + 1);
+        int nPlaceHolderWidth = panelRectangle.Width / (GemCount + 1);
         int nPlaceHolderHeight = panelRectangle.Height - nPaddingVectical * 2;
         if ((float)nPlaceHolderWidth / (float)nPlaceHolderHeight > 2)
             nPlaceHolderWidth = (int)((float)nPlaceHolderHeight * 1.5);
-        int nPaddingHorizontal = nPlaceHolderWidth / (m_nGemCount + 1);
+        int nPaddingHorizontal = nPlaceHolderWidth / (GemCount + 1);
         int x = 0;
-        for (int i = 0; i < m_nGemCount; ++i)
+        for (int i = 0; i < GemCount; ++i)
         {
             // Рисуем слот
             x += nPaddingHorizontal;
