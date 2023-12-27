@@ -3,6 +3,7 @@ using System.IO;
 using System.Collections.Generic;
 using Microsoft.Xna.Framework.Media;
 using Microsoft.Xna.Framework.Content;
+using System.Linq;
 
 namespace TheGame;
 
@@ -31,14 +32,14 @@ class MusicManager
         }
     }
 
-    public void LoadContent(ContentManager content)
+    public void LoadContent(ContentManager content, IList<string> assets)
     {
-        var dir = new DirectoryInfo(Path.Combine(content.RootDirectory, "Music"));
-        var files = dir.GetFiles("*.*");
-        
-        foreach (var file in files)
+        foreach (var asset in assets)
         {
-            string key = Path.GetFileNameWithoutExtension(file.Name);
+            if (!asset.Split(Path.DirectorySeparatorChar).Contains("Music"))
+                continue;
+
+            string key = Path.GetFileNameWithoutExtension(asset);
             string strFile = Path.Combine("Music", key);
             int n = key.IndexOfAny(new char[] { '0', '1', '2', '3', '4', '5', '6', '7', '8', '9' });
             string strCategory = key;

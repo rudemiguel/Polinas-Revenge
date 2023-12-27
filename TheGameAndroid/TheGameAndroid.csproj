@@ -1,0 +1,39 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <TargetFramework>net7.0-android</TargetFramework>
+    <SupportedOSPlatformVersion>28</SupportedOSPlatformVersion>
+    <OutputType>Exe</OutputType>
+    <ApplicationId>com.rudeboy.PolinasRevenge</ApplicationId>
+    <ApplicationVersion>1</ApplicationVersion>
+    <ApplicationDisplayVersion>1.0</ApplicationDisplayVersion>
+    <XamarinAndroidSupportSkipVerifyVersions>true</XamarinAndroidSupportSkipVerifyVersions>
+  </PropertyGroup>
+  <ItemGroup>
+    <PackageReference Include="MonoGame.Framework.Android" Version="3.8.1.303" />
+    <PackageReference Include="Aether.Physics2D.Diagnostics.MG" Version="2.0.0.1" />
+    <PackageReference Include="Aether.Physics2D.MG" Version="2.0.0" />
+    <PackageReference Include="MonoGame.Framework.Content.Pipeline" Version="3.8.1.303" />
+    <PackageReference Include="MonoGame.Content.Builder.Task" Version="3.8.1.303" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="..\TheGame\**\*.*">
+      <Link>TheGame\%(RecursiveDir)%(FileName)%(Extension)</Link>
+    </Compile>
+    <Compile Include="..\Supernova\**\*.*">
+      <Link>Supernova\%(RecursiveDir)%(FileName)%(Extension)</Link>
+    </Compile>
+    <Content Include="..\Content\bin\Android\Content\**\*.xnb">
+      <Link>Content\%(RecursiveDir)%(FileName)%(Extension)</Link>
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+  </ItemGroup>
+  <ItemGroup>
+    <MonoGameContentReference Include="..\Content\Content.mgcb">
+      <Link>Content\Content.mgcb</Link>
+    </MonoGameContentReference>
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\xTile.Pipeline\xTile.Pipeline.csproj" />
+    <ProjectReference Include="..\xTile\xTile.csproj" />
+  </ItemGroup>
+</Project>

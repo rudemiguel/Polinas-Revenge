@@ -25,17 +25,7 @@ class PanelManager
         m_nGemCount = 0;
     }
 
-    public int GemCount
-    {
-        get
-        {
-            return m_nGemCount;
-        }
-        set
-        {
-            m_nGemCount = value;
-        }
-    }
+    public int GemCount { get; set; }
 
     public List<Rectangle> PlaceholderBoundsList
     {

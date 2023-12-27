@@ -1,16 +1,15 @@
 
 #----------------------------- Global Properties ----------------------------#
 
-/outputDir:bin
+/outputDir:bin\
 /intermediateDir:obj
-/platform:Windows
+/platform:Android
 /config:
 /profile:Reach
 /compress:False
 
 #-------------------------------- References --------------------------------#
 /reference:..\xTile.Pipeline\bin\Debug\net6.0\xTile.Pipeline.dll
-
 
 #---------------------------------- Content ---------------------------------#
 

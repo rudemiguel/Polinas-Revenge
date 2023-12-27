@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using BloomPostprocess;
@@ -21,10 +22,10 @@ public class Main : Game
     private int m_fadeOpacity;
     private bool m_bFadeDirection;
 
-    /// <summary>
-    /// конструктор
-    /// </summary>
+    public IList<string> Assets { get; set; }
+
     public Main()
+        : base()
     {
         m_bFade = false;
         m_graphicsDeviceManager = new GraphicsDeviceManager(this);
@@ -32,6 +33,7 @@ public class Main : Game
         m_graphicsDeviceManager.PreferredBackBufferHeight = 480;
         m_graphicsDeviceManager.IsFullScreen = true;
         m_graphicsDeviceManager.SynchronizeWithVerticalRetrace = true;
+        Content.RootDirectory = "Content";
     }
 
     /// <summary>
@@ -39,7 +41,6 @@ public class Main : Game
     /// </summary>
     protected override void Initialize()
     {
-        Content.RootDirectory = "Content";
         m_soundManager = new SoundManager();
         m_musicManager = new MusicManager();
         m_mapGameElement = new MapGameElement(this, m_soundManager, m_musicManager);
@@ -52,7 +53,7 @@ public class Main : Game
         // bloom
         m_bloom = new BloomComponent(this);
         m_bloom.Settings = new BloomSettings(null, 0.95f, 1f, 1.5f, 1f, 1f, 1f);
-        Components.Add(m_bloom);
+        //Components.Add(m_bloom);
 
         base.Initialize();
     }
@@ -63,8 +64,8 @@ public class Main : Game
     protected override void LoadContent()
     {
         base.LoadContent();
-        m_soundManager.LoadContent(Content);
-        m_musicManager.LoadContent(Content);
+        m_soundManager.LoadContent(Content, Assets);
+        m_musicManager.LoadContent(Content, Assets);
         m_pixelTexture = new Texture2D(GraphicsDevice, 1, 1);
         m_pixelTexture.SetData<Color>(new Color[] { Color.White });
         m_spriteBatch = new SpriteBatch(GraphicsDevice);
@@ -98,7 +99,6 @@ public class Main : Game
     /// <summary>
     /// Обновление
     /// </summary>
-    /// <param name="gameTime"></param>
     protected override void Update(GameTime gameTime)
     {
         base.Update(gameTime);

@@ -100,7 +100,7 @@ class MapGameElement : DrawableGameComponent
     protected override void LoadContent()
     {
         var content = Game.Content;
-        content.RootDirectory = ".";
+        content.RootDirectory = "Content";
         var graphicsDevice = Game.GraphicsDevice;
         m_viewPort = new xTile.Dimensions.Rectangle(0, 0, graphicsDevice.Viewport.Width, graphicsDevice.Viewport.Height);
         
