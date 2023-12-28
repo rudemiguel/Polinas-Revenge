@@ -14,25 +14,38 @@ public class Main : Game
     private MapGameElement m_mapGameElement;
     private FinalScreenGameElement m_finalScreenGameElement;
     private BloomComponent m_bloom;
-    private Texture2D m_pixelTexture;
+    private Texture2D m_fadeTexture;
     private SpriteBatch m_spriteBatch;
     private SoundManager m_soundManager;
     private MusicManager m_musicManager;
+    private RenderTarget2D m_renderTarget;
     private bool m_bFade;
     private int m_fadeOpacity;
     private bool m_bFadeDirection;
 
+    /// <summary>
+    /// Список путей до ресурсов
+    /// </summary>
     public IList<string> Assets { get; set; }
+
+    /// <summary>
+    /// Разрешение для рендеренга
+    /// </summary>
+    public Rectangle GameResolution => new Rectangle(0, 0, 800, 480);
+
+    /// <summary>
+    /// Физическое разрешение устройства
+    /// </summary>
+    public Rectangle ScreenViewport { get; private set; }
 
     public Main()
         : base()
     {
         m_bFade = false;
         m_graphicsDeviceManager = new GraphicsDeviceManager(this);
-        m_graphicsDeviceManager.PreferredBackBufferWidth = 640;
-        m_graphicsDeviceManager.PreferredBackBufferHeight = 480;
         m_graphicsDeviceManager.IsFullScreen = true;
         m_graphicsDeviceManager.SynchronizeWithVerticalRetrace = true;
+        m_graphicsDeviceManager.PreferHalfPixelOffset = false;
         Content.RootDirectory = "Content";
     }
 
@@ -53,7 +66,32 @@ public class Main : Game
         // bloom
         m_bloom = new BloomComponent(this);
         m_bloom.Settings = new BloomSettings(null, 0.95f, 1f, 1.5f, 1f, 1f, 1f);
-        //Components.Add(m_bloom);
+        Components.Add(m_bloom);
+
+        m_graphicsDeviceManager.PreferredBackBufferWidth = GraphicsDevice.Adapter.CurrentDisplayMode.Width;
+        m_graphicsDeviceManager.PreferredBackBufferHeight = GraphicsDevice.Adapter.CurrentDisplayMode.Height;
+        m_graphicsDeviceManager.ApplyChanges();
+
+        // Расчет вьюпорта
+        var desiredAspect = (float)GameResolution.Width / (float)GameResolution.Height;
+        var actualAspect = (float)m_graphicsDeviceManager.PreferredBackBufferWidth / (float)GraphicsDevice.Adapter.CurrentDisplayMode.Height;
+        if (actualAspect <= desiredAspect)
+        {
+            // output is taller than it is wider, bars on top/bottom
+            int presentHeight = (int)((m_graphicsDeviceManager.PreferredBackBufferWidth / desiredAspect) + 0.5f);
+            int barHeight = (m_graphicsDeviceManager.PreferredBackBufferHeight - presentHeight) / 2;
+            ScreenViewport = new Rectangle(0, barHeight, m_graphicsDeviceManager.PreferredBackBufferWidth, presentHeight);
+        }
+        else
+        {
+            // output is wider than it is tall, bars left/right
+            int presentWidth = (int)((m_graphicsDeviceManager.PreferredBackBufferHeight * desiredAspect) + 0.5f);
+            int barWidth = (m_graphicsDeviceManager.PreferredBackBufferWidth - presentWidth) / 2;
+            ScreenViewport = new Rectangle(barWidth, 0, presentWidth, m_graphicsDeviceManager.PreferredBackBufferHeight);
+        }
+
+        // Бэкбуфер для рендеринга в уменьшеном разрешении
+        m_renderTarget = new RenderTarget2D(GraphicsDevice, GameResolution.Width, GameResolution.Height, false, SurfaceFormat.Color, DepthFormat.None, 1, RenderTargetUsage.DiscardContents);
 
         base.Initialize();
     }
@@ -66,10 +104,10 @@ public class Main : Game
         base.LoadContent();
         m_soundManager.LoadContent(Content, Assets);
         m_musicManager.LoadContent(Content, Assets);
-        m_pixelTexture = new Texture2D(GraphicsDevice, 1, 1);
-        m_pixelTexture.SetData<Color>(new Color[] { Color.White });
+        m_fadeTexture = new Texture2D(GraphicsDevice, 1, 1);
+        m_fadeTexture.SetData<Color>(new Color[] { Color.White });
         m_spriteBatch = new SpriteBatch(GraphicsDevice);
-        m_musicManager.PlayCategory("map");
+        m_musicManager.PlayCategory("map");        
     }
 
     /// <summary>
@@ -83,17 +121,26 @@ public class Main : Game
     /// <summary>
     /// Отрисовка
     /// </summary>
-    /// <param name="gameTime">Provides a snapshot of timing values.</param>
     protected override void Draw(GameTime gameTime)
     {
+        // Редерим в уменьшеном разрешении в бэкбуфер
+        GraphicsDevice.SetRenderTarget(m_renderTarget);
+
         base.Draw(gameTime);
 
         if (m_bFade)
         {
             m_spriteBatch.Begin();
-            m_spriteBatch.Draw(m_pixelTexture, new Vector2(0, 0), null, new Color(0, 0, 0, m_fadeOpacity), 0f, Vector2.Zero, new Vector2(GraphicsDevice.Viewport.Width, GraphicsDevice.Viewport.Height), SpriteEffects.None, 0);
+            m_spriteBatch.Draw(m_fadeTexture, new Vector2(0, 0), null, new Color(0, 0, 0, m_fadeOpacity), 0f, Vector2.Zero, new Vector2(GraphicsDevice.Viewport.Width, GraphicsDevice.Viewport.Height), SpriteEffects.None, 0);
             m_spriteBatch.End();
         }
+
+        GraphicsDevice.SetRenderTarget (null);
+
+        // Копируем бэкбуфер в устройство со скейлингом
+        m_spriteBatch.Begin();
+        m_spriteBatch.Draw(m_renderTarget, ScreenViewport, GameResolution, Color.White);
+        m_spriteBatch.End();
     }
 
     /// <summary>

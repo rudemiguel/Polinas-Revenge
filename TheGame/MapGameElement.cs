@@ -93,10 +93,11 @@ class MapGameElement : DrawableGameComponent
     /// </summary>        
     protected override void LoadContent()
     {
-        var content = Game.Content;
+        var game = Game as Main;
+        var content = game.Content;
         content.RootDirectory = "Content";
         var graphicsDevice = Game.GraphicsDevice;
-        m_viewPort = new xTile.Dimensions.Rectangle(0, 0, graphicsDevice.Viewport.Width, graphicsDevice.Viewport.Height);
+        m_viewPort = new xTile.Dimensions.Rectangle(0, 0, game.GameResolution.Width, game.GameResolution.Height);
         
         // Create a new SpriteBatch, which can be used to draw textures.
         m_xnaDisplayDevice = new XnaDisplayDevice(content, graphicsDevice);
@@ -277,21 +278,6 @@ class MapGameElement : DrawableGameComponent
     {
         m_map.DisposeTileSheets(m_xnaDisplayDevice);
         m_map = null;
-    }
-
-    /// <summary>
-    /// Отрисовка
-    /// </summary>
-    /// <param name="gameTime"></param>
-    public override void Draw(GameTime gameTime)
-    {
-        // карта
-        m_map.Draw(m_xnaDisplayDevice, m_viewPort, Location.Origin, false);
-
-        // стики
-        _stickSpriteBatch.Begin();
-        _dualStick.Draw(_stickSpriteBatch);
-        _stickSpriteBatch.End();
     }
 
     /// <summary>
@@ -519,6 +505,21 @@ class MapGameElement : DrawableGameComponent
             m_leafRemainMilliseconds = Random.Next(10000) + 10000;
             m_particleEmitterManager.CreateLeafEmitter(new Microsoft.Xna.Framework.Rectangle(m_viewPort.X - m_viewPort.Width * 2, m_viewPort.Y - m_viewPort.Height * 2, m_viewPort.Width, m_viewPort.Height));
         }
+    }
+
+    /// <summary>
+    /// Отрисовка
+    /// </summary>
+    /// <param name="gameTime"></param>
+    public override void Draw(GameTime gameTime)
+    {
+        // карта
+        m_map.Draw(m_xnaDisplayDevice, m_viewPort, Location.Origin, false);
+
+        // стики
+        _stickSpriteBatch.Begin();
+        _dualStick.Draw(_stickSpriteBatch);
+        _stickSpriteBatch.End();
     }
 
     #endregion
