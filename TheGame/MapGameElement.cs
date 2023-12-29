@@ -14,6 +14,7 @@ using nkast.Aether.Physics2D.Common;
 using nkast.Aether.Physics2D.Common.Decomposition;
 using FarseerPhysics;
 using Studies.Joystick.Input;
+using System.Linq;
 
 namespace TheGame;
 
@@ -43,9 +44,14 @@ class MapGameElement : DrawableGameComponent
     private WaypointManager m_waypointManager;
     // particle
     private ParticleEmitterManager m_particleEmitterManager;
-    // joystick
+    
+    // компоненты
     private DualStick _dualStick;
-    private SpriteBatch _stickSpriteBatch;
+    private Button _jumpButton;
+    private Button _fireButton;
+    private List<Component> _components = new ();
+    private SpriteBatch _componentsSpriteBatch;    
+
     //
     private bool m_bMapEnded;
     private bool m_bMapEndedFlagRead;
@@ -263,12 +269,34 @@ class MapGameElement : DrawableGameComponent
         foregroundLayer.AfterDraw += new LayerEventHandler(foregroundLayer_AfterDraw);
         waterLayer.AfterDraw += new LayerEventHandler(waterLayer_AfterDraw);
 
+        // Компоненты
+        _componentsSpriteBatch = new SpriteBatch(GraphicsDevice);
+
         // Джойстик
         var font = content.Load<SpriteFont>("Fonts\\font");
-        _stickSpriteBatch = new SpriteBatch(GraphicsDevice);
         _dualStick = new DualStick(font);
         _dualStick.LeftStick.SetAsFree();
         _dualStick.RightStick.SetAsFree();
+        _components.Add(_dualStick);
+
+        // Кнопки
+        var jumpButtonImage = content.Load<Texture2D>("Graphics\\jump_button");
+        var jumpButtonImageSize = new Microsoft.Xna.Framework.Rectangle(0, 0, jumpButtonImage.Width / 2, jumpButtonImage.Width / 2);
+        var jumpPosition = new Vector2(
+            game.GameResolution.Width - jumpButtonImageSize.Width - game.GameResolution.Width / 20,
+            game.GameResolution.Height - jumpButtonImageSize.Height - game.GameResolution.Height / 20);
+        _jumpButton = new Button(game, jumpButtonImage, font, jumpPosition);
+        _jumpButton.Rectangle = new Microsoft.Xna.Framework.Rectangle((int)jumpPosition.X, (int)jumpPosition.Y, jumpButtonImageSize.Width, jumpButtonImageSize.Height);
+
+        _components.Add(_jumpButton);
+        var fireButtonImage = content.Load<Texture2D>("Graphics\\fire_button");
+        var fireButtonImageSize = new Microsoft.Xna.Framework.Rectangle(0, 0, fireButtonImage.Width / 2, fireButtonImage.Width / 2);
+        var firePosition = new Vector2(
+            jumpPosition.X - fireButtonImageSize.Width - game.GameResolution.Width / 20,
+            game.GameResolution.Height - fireButtonImageSize.Height - game.GameResolution.Height / 20);
+        _fireButton = new Button(game, fireButtonImage, font, firePosition);
+        _fireButton.Rectangle = new Microsoft.Xna.Framework.Rectangle((int)firePosition.X, (int)firePosition.Y, fireButtonImageSize.Width, fireButtonImageSize.Height);
+        _components.Add(_fireButton);        
     }
 
     /// <summary>
@@ -286,11 +314,35 @@ class MapGameElement : DrawableGameComponent
     /// <param name="gameTime"></param>
     public override void Update(GameTime gameTime)
     {
-        bool bJump = false;
-        bool bFire = false;        
+        var game = Game as Main;
+        bool isJump = false;
+        bool isFire = false;        
+
+        // Ввод
+        var mouseState = Mouse.GetState();
+        var touchPanelState = TouchPanel.GetState();
+        var keyboardState = Keyboard.GetState();
+        GamePadState? gamePadState = GamePad.GetState(PlayerIndex.One).IsConnected
+            ? GamePad.GetState(PlayerIndex.One)
+            : null;
+
+        var viewport = game.ScreenViewport;
+        var gameResolution = game.GameResolution;
+        var touchLocations = touchPanelState
+            .Select(state =>
+            {
+                var x = ((state.Position.X - viewport.X) / viewport.Width) * gameResolution.Width;
+                var y = ((state.Position.Y - viewport.Y) / viewport.Height) * gameResolution.Height;
+                return new TouchLocation(state.Id, state.State, new Vector2(x, y));
+            })
+            .ToArray();        
+        touchPanelState = new TouchCollection(touchLocations);
+        
+        // Компоненты
+        foreach (var component in _components)
+            component.Update(gameTime, mouseState, touchPanelState);
 
         // Клавиатура
-        var keyboardState = Keyboard.GetState();
         var playerObject = m_gameObjectList[0] as ActorGameObject;
         if (keyboardState.IsKeyDown(Keys.Left))
             playerObject.ApplyLeft();
@@ -299,14 +351,11 @@ class MapGameElement : DrawableGameComponent
         else
             playerObject.ClearMotion();
         if (keyboardState.IsKeyDown(Keys.Space))
-            bJump = true;
+            isJump = true;
         if (keyboardState.IsKeyDown(Keys.RightShift))
-            bFire = true;
+            isFire = true;
 
         // Геймпад
-        GamePadState? gamePadState = null;
-        if (GamePad.GetState(PlayerIndex.One).IsConnected)
-            gamePadState = GamePad.GetState(PlayerIndex.One);
         if (gamePadState != null)
         {
             if (gamePadState.Value.DPad.Left == ButtonState.Pressed)
@@ -316,13 +365,12 @@ class MapGameElement : DrawableGameComponent
             else
                 playerObject.ClearMotion();
             if (gamePadState.Value.Buttons.A == ButtonState.Pressed)
-                bJump = true;
+                isJump = true;
             if (gamePadState.Value.Buttons.B == ButtonState.Pressed)
-                bFire = true;
+                isFire = true;
         }
 
-        // Джойстик        
-        _dualStick.Update(gameTime);
+        // Экранный джойстик        
         if (TouchPanel.GetCapabilities().IsConnected)
         {
             var stickHorizontalAxis = _dualStick.LeftStick.GetRelativeVector(_dualStick.aliveZoneSize).X;
@@ -334,15 +382,21 @@ class MapGameElement : DrawableGameComponent
                 playerObject.ClearMotion();
         }
 
+        // Экранные кнопки
+        if (_jumpButton.IsPressed)
+            isJump = true;
+        if (_fireButton.IsPressed)
+            isFire = true;
+
         // Прыжок
-        if (bJump)
+        if (isJump)
         {
             if (playerObject.Jump())
                 m_soundManager.Play("jump");
         }
 
         // Стрельба
-        if (bFire)
+        if (isFire)
         {
             if (playerObject.Fire())
             {
@@ -516,10 +570,11 @@ class MapGameElement : DrawableGameComponent
         // карта
         m_map.Draw(m_xnaDisplayDevice, m_viewPort, Location.Origin, false);
 
-        // стики
-        _stickSpriteBatch.Begin();
-        _dualStick.Draw(_stickSpriteBatch);
-        _stickSpriteBatch.End();
+        // компоненты
+        _componentsSpriteBatch.Begin();
+        foreach (var component in _components)
+            component.Draw(gameTime, _componentsSpriteBatch);        
+        _componentsSpriteBatch.End();
     }
 
     #endregion

@@ -1,11 +1,13 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using Microsoft.Xna.Framework.Input;
 using Microsoft.Xna.Framework.Input.Touch;
 using Studies.Joystick.Abstract;
+using TheGame;
 
 namespace Studies.Joystick.Input;
 
-public class DualStick
+public class DualStick : Component
 {
     // How quickly the touch stick follows in FreeFollow mode
     public readonly float aliveZoneFollowSpeed;
@@ -22,7 +24,19 @@ public class DualStick
     private int tapStartCount = 0;
     // this keeps counting, no ideia why i cant reset it
     private double totalTime;
-    public DualStick(SpriteFont font, float aliveZoneFollowFactor = 1.3f, float aliveZoneFollowSpeed = 0.05f, float edgeSpacing = 25f, float aliveZoneSize = 65f, float deadZoneSize = 5f)
+
+    private readonly SpriteFont font;
+    public Stick RightStick { get; set; }
+    public Stick LeftStick { get; set; }
+
+
+    public DualStick(
+        SpriteFont font,
+        float aliveZoneFollowFactor = 1.3f,
+        float aliveZoneFollowSpeed = 0.05f,
+        float edgeSpacing = 25f,
+        float aliveZoneSize = 65f,
+        float deadZoneSize = 5f)
     {
         this.aliveZoneFollowFactor = aliveZoneFollowFactor;
         this.aliveZoneFollowSpeed = aliveZoneFollowSpeed;
@@ -36,9 +50,13 @@ public class DualStick
         {
             FixedLocation = new Vector2(aliveZoneSize * aliveZoneFollowFactor, TouchPanel.DisplayHeight - aliveZoneSize * aliveZoneFollowFactor)
         };
-        RightStick = new Stick(deadZoneSize,
+        RightStick = new Stick(
+            deadZoneSize,
             new Rectangle((int)(TouchPanel.DisplayWidth * 0.5f), 100, (int)(TouchPanel.DisplayWidth * 0.5f), TouchPanel.DisplayHeight - 100),
-            aliveZoneSize, aliveZoneFollowFactor, aliveZoneFollowSpeed, edgeSpacing)
+            aliveZoneSize,
+            aliveZoneFollowFactor,
+            aliveZoneFollowSpeed,
+            edgeSpacing)
         {
             FixedLocation = new Vector2(TouchPanel.DisplayWidth - aliveZoneSize * aliveZoneFollowFactor, TouchPanel.DisplayHeight - aliveZoneSize * aliveZoneFollowFactor)
         };
@@ -46,21 +64,20 @@ public class DualStick
         //TouchPanel.EnabledGestures = GestureType.None;
         //TouchPanel.DisplayOrientation = DisplayOrientation.LandscapeLeft;
     }
-    private readonly SpriteFont font;
-    public Stick RightStick { get; set; }
-    public Stick LeftStick { get; set; }
-    public void Update(GameTime gameTime)
+
+    /// <inheritdoc/>
+    public override void Update(GameTime gameTime, MouseState mouseState, TouchCollection touchPanelState)
     {
         var dt = (float)gameTime.ElapsedGameTime.TotalMilliseconds;
         totalTime += dt;
 
-        var state = TouchPanel.GetState();
+        var state = touchPanelState;
         TouchLocation? leftTouch = null, rightTouch = null;
 
         if (tapStartCount > state.Count)
             tapStartCount = state.Count;
 
-        foreach (TouchLocation loc in state)
+        foreach (var loc in state)
         {
             if (loc.State == TouchLocationState.Released)
             {
@@ -166,15 +183,16 @@ public class DualStick
         LeftStick.Update(state, leftTouch, dt);
         RightStick.Update(state, rightTouch, dt);
     }
-    public void Draw(SpriteBatch spriteBatch)
+
+    /// <inheritdoc/>
+    public override void Draw(GameTime gameTime, SpriteBatch spriteBatch)
     {
-        DrawStringCentered($"L", LeftStick.StartLocation, Color.Black, spriteBatch);
-        DrawStringCentered($"L@L", LeftStick.GetPositionVector(aliveZoneSize), Color.Black, spriteBatch);
-
-
-        DrawStringCentered($"R", RightStick.StartLocation, Color.Black, spriteBatch);
-        DrawStringCentered($"R@R", RightStick.GetPositionVector(aliveZoneSize), Color.Black, spriteBatch);
+        //DrawStringCentered($"L", LeftStick.StartLocation, Color.Black, spriteBatch);
+        //DrawStringCentered($"L@L", LeftStick.GetPositionVector(aliveZoneSize), Color.Black, spriteBatch);
+        //DrawStringCentered($"R", RightStick.StartLocation, Color.Black, spriteBatch);
+        //DrawStringCentered($"R@R", RightStick.GetPositionVector(aliveZoneSize), Color.Black, spriteBatch);
     }
+
     private void DrawStringCentered(string text, Vector2 position, Color color, SpriteBatch spriteBatch)
     {
         var size = font.MeasureString(text);

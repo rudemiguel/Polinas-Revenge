@@ -2,6 +2,7 @@ using System.Collections.Generic;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using BloomPostprocess;
+using Microsoft.Xna.Framework.Input.Touch;
 
 namespace TheGame;
 
