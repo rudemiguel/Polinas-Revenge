@@ -242,7 +242,7 @@ class MapGameElement : DrawableGameComponent
         }
 
         // метки
-        Layer waypointsLayer = m_map.GetLayer("waypoints");
+        var waypointsLayer = m_map.GetLayer("waypoints");
         if (waypointsLayer != null)
         {
             for (int x = 0; x < waypointsLayer.LayerWidth; x++)
@@ -286,16 +286,39 @@ class MapGameElement : DrawableGameComponent
             game.GameResolution.Width - jumpButtonImageSize.Width - game.GameResolution.Width / 20,
             game.GameResolution.Height - jumpButtonImageSize.Height - game.GameResolution.Height / 20);
         _jumpButton = new Button(game, jumpButtonImage, font, jumpPosition);
-        _jumpButton.Rectangle = new Microsoft.Xna.Framework.Rectangle((int)jumpPosition.X, (int)jumpPosition.Y, jumpButtonImageSize.Width, jumpButtonImageSize.Height);
-
+        _jumpButton.Rectangle = new (
+            (int)jumpPosition.X,
+            (int)jumpPosition.Y,
+            jumpButtonImageSize.Width,
+            jumpButtonImageSize.Height
+        );
+        _jumpButton.TouchRectangle = new (
+            _jumpButton.Rectangle.X - game.GameResolution.Width / 40,
+            _jumpButton.Rectangle.Y - game.GameResolution.Height / 40,
+            _jumpButton.Rectangle.Width + game.GameResolution.Width * 2 / 40,
+            _jumpButton.Rectangle.Height + game.GameResolution.Height * 2 / 40
+        );
         _components.Add(_jumpButton);
+
         var fireButtonImage = content.Load<Texture2D>("Graphics\\fire_button");
         var fireButtonImageSize = new Microsoft.Xna.Framework.Rectangle(0, 0, fireButtonImage.Width / 2, fireButtonImage.Width / 2);
         var firePosition = new Vector2(
             jumpPosition.X - fireButtonImageSize.Width - game.GameResolution.Width / 20,
             game.GameResolution.Height - fireButtonImageSize.Height - game.GameResolution.Height / 20);
         _fireButton = new Button(game, fireButtonImage, font, firePosition);
-        _fireButton.Rectangle = new Microsoft.Xna.Framework.Rectangle((int)firePosition.X, (int)firePosition.Y, fireButtonImageSize.Width, fireButtonImageSize.Height);
+        _fireButton.Rectangle = new Microsoft.Xna.Framework.Rectangle (
+            (int)firePosition.X,
+            (int)firePosition.Y,
+            fireButtonImageSize.Width,
+            fireButtonImageSize.Height
+        );
+        _fireButton.TouchRectangle = new (
+            _fireButton.Rectangle.X - game.GameResolution.Width / 40,
+            _fireButton.Rectangle.Y - game.GameResolution.Height / 40,
+            _fireButton.Rectangle.Width + game.GameResolution.Width * 2 / 40,
+            _fireButton.Rectangle.Height + game.GameResolution.Height * 2 / 40
+        );
+
         _components.Add(_fireButton);        
     }
 

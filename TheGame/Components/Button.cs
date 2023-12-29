@@ -38,6 +38,8 @@ public class Button : Component
 
     public Rectangle Rectangle { get; set; }
 
+    public Rectangle TouchRectangle { get; set; }
+
     public string Text { get; set; }
 
     #endregion
@@ -52,6 +54,7 @@ public class Button : Component
         Position = position;
         PenColour = Color.Black;
         Rectangle = new ((int)Position.X, (int)Position.Y, _texture.Width, _texture.Height);
+        TouchRectangle = Rectangle;
     }
 
     /// <inheritdoc/>
@@ -99,10 +102,10 @@ public class Button : Component
         foreach (var touchState in touchPanelState)
         {
             var touchRectangle = new Rectangle((int)touchState.Position.X, (int)touchState.Position.Y, 1, 1);
-            if (touchRectangle.Intersects(Rectangle))
+            if (touchRectangle.Intersects(TouchRectangle))
             {
                 _isHovering = true;
-                if (touchState.State == TouchLocationState.Pressed)
+                if (touchState.State == TouchLocationState.Pressed || touchState.State == TouchLocationState.Moved)
                 {
                     IsPressed = true;
                     Click?.Invoke(this, new EventArgs());
